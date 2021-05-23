@@ -2,8 +2,8 @@ const socket = io('/')
 const audioGrid = document.getElementById('audio-grid')
 const userElement = document.getElementById("user-list")
 
-var myPeer = new Peer({
-    host: 'equatorial-flash-homburg.glitch.me',
+var myPeer = new Peer(USERNAME, {
+    host: 'voicify-web.herokuapp.com',
     path: '/peerjs',
     config: { 'iceServers': [
     { url: 'stun:stun.l.google.com:19302' },
@@ -23,7 +23,8 @@ const myAudio = document.createElement('audio')
 myAudio.muted = true
 const peers = {}
 
-var username;
+// tijdelijke hack
+const username = USERNAME;
 
 navigator.mediaDevices.getUserMedia({
   video: false,
@@ -65,7 +66,6 @@ socket.on('user-disconnected', userId => {
 })
 
 myPeer.on('open', id => {
-  username = id;
   socket.emit('join-room', ROOM_ID, id)
 })
 
