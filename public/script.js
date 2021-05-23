@@ -4,7 +4,7 @@ const userElement = document.getElementById("user-list")
 // const myPeer = new Peer()
 
 const myPeer = new Peer(undefined, {
-  host: 'https://fuchsia-zebra-7wea4mjt.ws-eu07.gitpod.io/',
+  host: 'https://fuchsia-zebra-7wea4mjt.ws-eu07.gitpod.io',
   port: '9000'
 })
 
