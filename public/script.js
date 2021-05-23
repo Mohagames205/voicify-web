@@ -1,13 +1,13 @@
 const socket = io('/')
 const audioGrid = document.getElementById('audio-grid')
 const userElement = document.getElementById("user-list")
-const myPeer = new Peer()
-/*
+// const myPeer = new Peer()
+
 const myPeer = new Peer(undefined, {
-  host: '/',
-  port: '3001'
+  host: 'https://fuchsia-zebra-7wea4mjt.ws-eu07.gitpod.io/',
+  port: '9000'
 })
-*/
+
 const myAudio = document.createElement('audio')
 myAudio.muted = true
 const peers = {}
