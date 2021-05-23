@@ -1,12 +1,25 @@
 const socket = io('/')
 const audioGrid = document.getElementById('audio-grid')
 const userElement = document.getElementById("user-list")
-// const myPeer = new Peer()
 
-const myPeer = new Peer(undefined, {
-  host: '9000-fuchsia-zebra-7wea4mjt.ws-eu07.gitpod.io',
-})
+var myPeer = new Peer({
+    host: 'equatorial-flash-homburg.glitch.me',
+    path: '/peerjs',
+    config: { 'iceServers': [
+    { url: 'stun:stun01.sipphone.com' },
+    { url: 'stun:stun.ekiga.net' },
+{ url: 'stun:stunserver.org' },
+{ url: 'stun:stun.softjoys.com' },
+{ url: 'stun:stun.voiparound.com' },
+{ url: 'stun:stun.voipbuster.com' },
+{ url: 'stun:stun.voipstunt.com' },
+{ url: 'stun:stun.voxgratia.org' },
+{ url: 'stun:stun.xten.com' },
+  ]
+   },
 
+debug: 3
+});
 const myAudio = document.createElement('audio')
 myAudio.muted = true
 const peers = {}
@@ -28,8 +41,7 @@ navigator.mediaDevices.getUserMedia({
   })
 
   socket.on('user-connected', (userId) => {
-    // setTimeout(connectToNewUser,1000,userId,stream)
-    connectToNewUser(userId, stream)
+    setTimeout(connectToNewUser,1000,userId,stream)
   })
 })
 
