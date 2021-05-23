@@ -3,8 +3,7 @@ const audioGrid = document.getElementById('audio-grid')
 const userElement = document.getElementById("user-list")
 
 var myPeer = new Peer(USERNAME, {
-    host: 'localhost',
-    port: 80,
+    host: 'voicify-web.herokuapp.com',
     path: '/peerjs',
     config: { 'iceServers': [
     { url: 'stun:stun.l.google.com:19302' },
