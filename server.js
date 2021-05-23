@@ -37,9 +37,9 @@ app.get('/room/:room', (req, res) => {
   res.render('room', { roomId: req.params.room, username: req.query.username})
 })
 
-/* TODO: this needs to be a post request */
-app.get('/api/distances', (req, res) => {
-  console.log(req.query.coordinates)
+app.post('/api/distances', (req, res) => {
+  coordinates = JSON.parse(req.body.coordinates)
+  console.log(coordinates)
   console.log("COORDINATE API CALLED")
 })
 
