@@ -4,8 +4,7 @@ const userElement = document.getElementById("user-list")
 // const myPeer = new Peer()
 
 const myPeer = new Peer(undefined, {
-  host: 'fuchsia-zebra-7wea4mjt.ws-eu07.gitpod.io',
-  port: '9000'
+  host: '9000-fuchsia-zebra-7wea4mjt.ws-eu07.gitpod.io',
 })
 
 const myAudio = document.createElement('audio')
