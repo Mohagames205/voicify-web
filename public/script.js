@@ -3,7 +3,8 @@ const audioGrid = document.getElementById('audio-grid')
 const userElement = document.getElementById("user-list")
 
 var myPeer = new Peer(USERNAME, {
-    host: 'voicify-web.herokuapp.com',
+    host: 'localhost',
+    port: 80,
     path: '/peerjs',
     config: { 'iceServers': [
     { url: 'stun:stun.l.google.com:19302' },
@@ -63,6 +64,10 @@ socket.on("user-list-update", (userList) => {
 
 socket.on('user-disconnected', userId => {
   if (peers[userId]) peers[userId].close()
+})
+
+socket.on('abc', () => {
+  console.log("pm heeft iets gezegd")
 })
 
 myPeer.on('open', id => {

@@ -11,6 +11,7 @@ const peerServer = ExpressPeerServer(server, {
 
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded()); // to support URL-encoded bodies
+
 app.use('/peerjs', peerServer);
 
 app.set('view engine', 'ejs')
@@ -34,6 +35,12 @@ app.post("/room/join", (req, res) => {
 
 app.get('/room/:room', (req, res) => {
   res.render('room', { roomId: req.params.room, username: req.query.username})
+})
+
+/* TODO: this needs to be a post request */
+app.get('/api/distances', (req, res) => {
+  console.log(req.query.coordinates)
+  console.log("COORDINATE API CALLED")
 })
 
 io.on('connection', socket => {
