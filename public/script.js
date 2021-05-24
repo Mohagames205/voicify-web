@@ -91,7 +91,9 @@ socket.on('coordinates-update', coordinates => {
           }
         }
         else {
-          userAudio.volume = 0;
+          if(userAudio !== null) {
+            userAudio.volume = 0;
+          }
         }
       }
     }
