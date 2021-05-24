@@ -85,6 +85,11 @@ socket.on('coordinates-update', coordinates => {
             userAudio.volume = userVolume;
           }
         }
+        else {
+          if(userAudio !== null) {
+            userAudio.volume = 0;
+          }
+        }
       }
 })
 
