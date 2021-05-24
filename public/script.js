@@ -75,7 +75,7 @@ socket.on('user-disconnected', userId => {
 })
 
 socket.on('coordinates-update', coordinates => {
-    const primaryVolumes = JSON.parse(coordinates[username])
+    const primaryVolumes = JSON.parse(coordinates)[username]
     for (volumeUser in primaryVolumes){
         userAudio = document.getElementById(volumeUser)
         userDistance = primaryVolumes[volumeUser]
