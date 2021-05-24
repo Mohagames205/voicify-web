@@ -76,20 +76,22 @@ socket.on('user-disconnected', userId => {
 
 socket.on('coordinates-update', coordinates => {
 
-  const primaryUser = Object.keys(coordinates)[0]
-  const volumes = JSON.parse(coordinates[primaryUser])
-  
-  for (var username in volumes) {
-    userAudio = document.getElementById(username)
-    userDistance = volumes[username] 
-    if(userDistance <= 30){
-      if(userAudio !== null) {
-        const userVolume = userDistance / 30
-        userAudio.volume = userVolume;
-        console.log(userAudio.volume)
+  console.log(coordinates)
+  for (var primaryUser in coordinates) {
+    for (volumeUser in coordinates[primaryUser]){
+        userAudio = document.getElementById(volumeUser)
+        userDistance = volumes[coordinates[primaryUser][volumeUser]]
+        if(userDistance <= 30){
+          if(userAudio !== null) {
+            const userVolume = userDistance / 30
+            userAudio.volume = userVolume;
+          }
+        }
+        else {
+          userAudio.volume = 0;
+        }
       }
     }
-  }
 })
 
 myPeer.on('open', id => {
