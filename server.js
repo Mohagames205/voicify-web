@@ -38,8 +38,11 @@ app.get('/room/:room', (req, res) => {
 })
 
 app.post('/api/distances', (req, res) => {
+  console.log(req.body.coordinates)
   coordinates = JSON.parse(req.body.coordinates)
-  console.log(coordinates)
+
+  pushCoordinates(coordinates, req.body.roomId);
+
   console.log("COORDINATE API CALLED")
 })
 
@@ -48,36 +51,36 @@ io.on('connection', socket => {
 
     socket.join(roomId)
     socket.to(roomId).emit('user-connected', userId)
-    socket.username = userId
-    socket.roomId = roomId
 
-    clientNames = []
+    socket.username = userId;
 
-    io.in(roomId).fetchSockets().then(clients => {
-      for(const client of clients){
-          clientNames.push(client.username)
-      }
+    updateUserlist(socket, roomId)
 
-      socket.to(roomId).emit('user-list-update', clientNames);
-      io.sockets.in(roomId).emit('user-list-update', clientNames);
-    });
 
     socket.on('disconnect', () => {
-      clientNames = []
-
-    io.in(roomId).fetchSockets().then(clients => {
-      for(const client of clients){
-          clientNames.push(client.username)
-      }
-
-      socket.to(roomId).emit('user-list-update', clientNames);
-      io.to(roomId).emit('user-list-update', clientNames);
-    });
-
+      updateUserlist(socket, roomId)
       socket.to(roomId).emit('user-disconnected', userId)
     })
 
   })
 })
+
+function pushCoordinates(coordinates, roomId){
+  console.log(roomId)
+  io.to(roomId).emit('coordinates-update', coordinates);
+}
+
+function updateUserlist(socket, roomId){
+  clientNames = []
+
+      io.in(roomId).fetchSockets().then(clients => {
+        for(const client of clients){
+            clientNames.push(client.username)
+        }
+
+        socket.to(roomId).emit('user-list-update', clientNames);
+        io.to(roomId).emit('user-list-update', clientNames);
+      });
+}
 
 server.listen(process.env.PORT || 80)
