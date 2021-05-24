@@ -10,7 +10,7 @@ const peerServer = ExpressPeerServer(server, {
 });
 
 app.use(express.json());       // to support JSON-encoded bodies
-app.use(express.urlencoded()); // to support URL-encoded bodies
+app.use(express.urlencoded({extended: true})); // to support URL-encoded bodies
 
 app.use('/peerjs', peerServer);
 

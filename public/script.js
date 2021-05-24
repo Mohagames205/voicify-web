@@ -35,8 +35,10 @@ navigator.mediaDevices.getUserMedia({
 
   myPeer.on('call', call => {
     call.answer(stream)
+
     const audio = document.createElement('audio')
-    
+    audio.id = call.peer
+
     call.on('stream', userAudioStream => {
       addAudioStream(audio, userAudioStream)
     })
@@ -70,8 +72,19 @@ socket.on('user-disconnected', userId => {
 socket.on('coordinates-update', coordinates => {
 
   const primaryUser = Object.keys(coordinates)[0]
-  console.log(document.getElementById(primaryUser))
-
+  const volumes = JSON.parse(coordinates[primaryUser])
+  
+  for (var username in volumes) {
+    userAudio = document.getElementById(username)
+    userDistance = volumes[username] 
+    if(userDistance <= 30){
+      if(userAudio !== null) {
+        const userVolume = userDistance / 30
+        userAudio.volume = userVolume;
+        console.log(userAudio.volume)
+      }
+    }
+  }
 })
 
 myPeer.on('open', id => {
@@ -80,8 +93,11 @@ myPeer.on('open', id => {
 
 function connectToNewUser(userId, stream) {
   const call = myPeer.call(userId, stream)
+
+  // set audio id if user connects
   const audio = document.createElement('audio')
   audio.id = userId;
+
   call.on('stream', userAudioStream => {
     addAudioStream(audio, userAudioStream)
   })
