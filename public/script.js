@@ -80,11 +80,10 @@ socket.on('coordinates-update', coordinates => {
     for (volumeUser in primaryVolumes){
         userAudio = document.getElementById(volumeUser)
         userDistance = primaryVolumes[volumeUser]
-        if(userDistance <= 50){
+        if(userDistance <= 30){
           if(userAudio !== null) {
-            const userVolume = 1 -  userDistance / 50
+            const userVolume = 1 - (userDistance / 30)
             userAudio.volume = userVolume;
-            console.log(userVolume, volumeUser)
           }
         }
         else {
