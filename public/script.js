@@ -1,6 +1,7 @@
 const socket = io('/')
 const audioGrid = document.getElementById('audio-grid')
 const userElement = document.getElementById("user-list")
+const audioSources = {};
 
 var myPeer = new Peer(USERNAME, {
     host: 'voicify-web.herokuapp.com',
@@ -35,6 +36,7 @@ navigator.mediaDevices.getUserMedia({
   myPeer.on('call', call => {
     call.answer(stream)
     const audio = document.createElement('audio')
+    
     call.on('stream', userAudioStream => {
       addAudioStream(audio, userAudioStream)
     })
@@ -65,8 +67,11 @@ socket.on('user-disconnected', userId => {
   if (peers[userId]) peers[userId].close()
 })
 
-socket.on('abc', () => {
-  console.log("pm heeft iets gezegd")
+socket.on('coordinates-update', coordinates => {
+
+  const primaryUser = Object.keys(coordinates)[0]
+  console.log(document.getElementById(primaryUser))
+
 })
 
 myPeer.on('open', id => {
@@ -76,6 +81,7 @@ myPeer.on('open', id => {
 function connectToNewUser(userId, stream) {
   const call = myPeer.call(userId, stream)
   const audio = document.createElement('audio')
+  audio.id = userId;
   call.on('stream', userAudioStream => {
     addAudioStream(audio, userAudioStream)
   })
