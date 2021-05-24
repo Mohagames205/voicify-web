@@ -75,20 +75,16 @@ socket.on('user-disconnected', userId => {
 })
 
 socket.on('coordinates-update', coordinates => {
-
-  console.log(coordinates)
   for (var primaryUser in coordinates) {
     const primaryVolumes = JSON.parse(coordinates[primaryUser])
-    console.log(primaryVolumes)
     for (volumeUser in primaryVolumes){
-      console.log(volumeUser)
         userAudio = document.getElementById(volumeUser)
         userDistance = primaryVolumes[volumeUser]
-        console.log(userDistance, volumeUser)
-        if(userDistance <= 30){
+        if(userDistance <= 50){
           if(userAudio !== null) {
-            const userVolume = 1 -  userDistance / 30
+            const userVolume = 1 -  userDistance / 50
             userAudio.volume = userVolume;
+            console.log(userVolume, volumeUser)
           }
         }
         else {
