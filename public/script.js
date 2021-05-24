@@ -4,7 +4,8 @@ const userElement = document.getElementById("user-list")
 const audioSources = {};
 
 var peerOptions = {
-    host: 'voicify-web.herokuapp.com',
+    host: 'localhost',
+    port: 80,
     path: '/peerjs',
     config: { 'iceServers': [
     { url: 'stun:stun.l.google.com:19302' },
@@ -75,24 +76,17 @@ socket.on('user-disconnected', userId => {
 })
 
 socket.on('coordinates-update', coordinates => {
-  for (var primaryUser in coordinates) {
-    const primaryVolumes = JSON.parse(coordinates[primaryUser])
+    const primaryVolumes = JSON.parse(coordinates[username])
     for (volumeUser in primaryVolumes){
         userAudio = document.getElementById(volumeUser)
         userDistance = primaryVolumes[volumeUser]
-        if(userDistance <= 30){
+        if(userDistance <= 40){
           if(userAudio !== null) {
-            const userVolume = 1 - (userDistance / 30)
+            const userVolume = 1 - (userDistance / 40)
             userAudio.volume = userVolume;
           }
         }
-        else {
-          if(userAudio !== null) {
-            userAudio.volume = 0;
-          }
-        }
       }
-    }
 })
 
 myPeer.on('open', id => {
