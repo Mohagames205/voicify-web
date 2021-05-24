@@ -79,9 +79,11 @@ socket.on('coordinates-update', coordinates => {
   console.log(coordinates)
   for (var primaryUser in coordinates) {
     const primaryVolumes = JSON.parse(coordinates[primaryUser])
+    console.log(primaryVolumes)
     for (volumeUser in primaryVolumes){
+      console.log(volumeUser)
         userAudio = document.getElementById(volumeUser)
-        userDistance = volumes[primaryVolumes[volumeUser]]
+        userDistance = primaryVolumes[volumeUser]
         if(userDistance <= 30){
           if(userAudio !== null) {
             const userVolume = userDistance / 30
