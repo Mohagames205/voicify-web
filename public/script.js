@@ -4,7 +4,8 @@ const userElement = document.getElementById("user-list")
 const audioSources = {};
 
 var peerOptions = {
-    host: 'voicify-web.herokuapp.com',
+    host: 'localhost',
+    port: 80,
     path: '/peerjs',
     config: { 'iceServers': [
     { url: 'stun:stun.l.google.com:19302' },
