@@ -61,22 +61,13 @@ app.post('/api/distances', (req, res) => {
 })
 
 io.on('connection', socket => {
-
-  console.log("jow")
-
-  socket.on('jow', () => {
-    console.log("test")
-  })
-
   socket.on('join-room', (roomId, userId) => {
 
     socket.join(roomId)
     socket.to(roomId).emit('user-connected', userId)
-
     socket.username = userId;
-
+    
     updateUserlist(socket, roomId)
-
 
     socket.on('disconnect', () => {
       updateUserlist(socket, roomId)

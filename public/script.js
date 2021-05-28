@@ -18,7 +18,7 @@ var peerOptions = {
   ]}, debug: false
 }
 
-var myPeer = new Peer(USERNAME, peerOptions);
+var myPeer = new Peer(USERNAME.toLowerCase(), peerOptions);
 //const myAudio = document.createElement('audio')
 //myAudio.muted = true
 const peers = {}
@@ -47,8 +47,8 @@ navigator.mediaDevices.getUserMedia({
   })
 
   socket.on('user-connected', (userId) => {
-    //setTimeout(connectToNewUser,1000,userId,stream)
-    connectToNewUser(userId, stream)
+    setTimeout(connectToNewUser,1000,userId,stream)
+    //connectToNewUser(userId, stream)
   })
 })
 
@@ -71,6 +71,9 @@ socket.on("user-list-update", (userList) => {
 socket.on('user-disconnected', userId => {
   if (peers[userId]) peers[userId].close()
   delete peers[userId]
+
+  document.remove(document.getElementById(userId));
+
   console.log("User has disconnected", userId)
 })
 
