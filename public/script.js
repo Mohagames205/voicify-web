@@ -72,7 +72,10 @@ socket.on('user-disconnected', userId => {
   if (peers[userId]) peers[userId].close()
   delete peers[userId]
 
-  document.remove(document.getElementById(userId));
+  var audio = document.getElementById(userId);
+  if(audio !== null) {
+    audio.remove();
+  }
 
   console.log("User has disconnected", userId)
 })
