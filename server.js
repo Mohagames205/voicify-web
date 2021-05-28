@@ -1,20 +1,15 @@
 const express = require('express')
 const app = express()
-const { ExpressPeerServer } = require('peer');
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
 const { v4: uuidV4 } = require('uuid')
 const net = require('net');
 
-const peerServer = ExpressPeerServer(server, {
-  debug: true
-});
-
 var socket = net.createServer(function(socket) {
 	socket.pipe(socket);
 });
 
-socket.listen(1337);
+socket.listen(8080);
 
 socket.on('connection', (tcpSocket) => {
     tcpSocket.on('data', function(chunk) {
@@ -33,8 +28,6 @@ socket.on('connection', (tcpSocket) => {
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded({extended: true})); // to support URL-encoded bodies
 
-app.use('/peerjs', peerServer);
-
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
 
@@ -47,11 +40,11 @@ app.get('/', (req, res) => {
 })*/
 
 app.post("/room/create", (req, res) => {
-  res.redirect(`/room/${uuidV4()}?username=${req.body.username}`)
+  res.redirect(`/room/${uuidV4()}?username=${req.body.username.toLowerCase()}`)
 })
 
 app.post("/room/join", (req, res) => {
-  res.redirect(`/room/${req.body.uuid}?username=${req.body.username}`)
+  res.redirect(`/room/${req.body.uuid}?username=${req.body.username.toLowerCase()}`)
 })
 
 app.get('/room/:room', (req, res) => {

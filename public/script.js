@@ -4,9 +4,8 @@ const userElement = document.getElementById("user-list")
 const audioSources = {};
 
 var peerOptions = {
-    host: 'localhost',
-    port: 80,
-    path: '/peerjs',
+    host: 'voxum.mootje.be',
+    path: "/myapp",
     config: { 'iceServers': [
     { url: 'stun:stun.l.google.com:19302' },
     { url: 'stun:stun1.l.google.com:19302' },
@@ -75,11 +74,12 @@ socket.on('user-disconnected', userId => {
   console.log("User has disconnected", userId)
 })
 
+
+
 socket.on('coordinates-update', coordinates => {
     var primaryVolumes = coordinates[username]
     if(!primaryVolumes) return;
     for (volumeUser in primaryVolumes){
-
       //primary volumes: {"stijnj07":50,"itzsumm":31}
         userAudio = document.getElementById(volumeUser)
         userDistance = primaryVolumes[volumeUser]
