@@ -4,25 +4,34 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
     <title>Preroom</title>
 </head>
 <body>
+    <h1 style="text-align: center; font-size: 2.5rem;">Voxum</h1>
+    <main>
 
-    <form action="/room/join" method="POST">
-        <h2>Join room</h2>
-        <label for="username">Username</label>
-        <input  name="username" id="username"><br><br>
-
-        <label for="roomuuid">Room ID</label>
-        <input name="uuid" id="roomuuid"><br><br>
-        <button>Join</button>
-    </form>
-    <br>
-    <form action="/room/create" method="POST">
-        <h2>Create room</h2>
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username"><br><br>
-        <button type="submit">Create</button>
-    </form>
+        <div class="form">
+            <form action="/room/join" method="POST" id="test">
+                <h2>Join room</h2>
+                <label for="username"><p>Username</p></label>
+                <input  name="username" id="username"><br><br>
+    
+                <label for="roomuuid"><p>Room ID</p></label>
+                <input name="uuid" id="roomuuid"><br><br>
+                <button>Join</button>
+            </form>
+        </div>
+        <div class="form">
+            <form action="/room/create" method="POST">
+                <h2>Create room</h2>
+                <label for="username"><p>Username</p></label>
+                <input type="text" name="username" id="username"><br><br>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+            
+    </main>
+    
 </body>
 </html>
