@@ -4,6 +4,13 @@ const server = require('http').Server(app)
 const io = require('socket.io')(server)
 const { v4: uuidV4 } = require('uuid')
 const net = require('net');
+require("dotenv").config();
+
+const peerConfig = {
+  host: process.env.PEER_JS_HOST,
+  port: process.env.PEER_JS_PORT,
+  path: process.env.PEER_JS_PATH
+}
 
 var socket = net.createServer(function(socket) {
 	socket.pipe(socket);
@@ -48,7 +55,7 @@ app.post("/room/join", (req, res) => {
 })
 
 app.get('/room/:room', (req, res) => {
-  res.render('room', { roomId: req.params.room, username: req.query.username})
+  res.render('room', { roomId: req.params.room, username: req.query.username, peerSettings: peerConfig })
 })
 
 app.post('/api/distances', (req, res) => {
@@ -59,6 +66,12 @@ app.post('/api/distances', (req, res) => {
 
   console.log("COORDINATE API CALLED")
 })
+
+app.get('/api/peerconfig', (req, res) => {
+
+
+
+});
 
 io.on('connection', socket => {
   socket.on('join-room', (roomId, userId) => {

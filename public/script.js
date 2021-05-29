@@ -1,11 +1,11 @@
 const socket = io('/')
 const audioGrid = document.getElementById('audio-grid')
 const userElement = document.getElementById("user-list")
-const audioSources = {};
 
 var peerOptions = {
-    host: 'voxum.mootje.be',
-    path: "/myapp",
+    host: PEER_HOST,
+    port: PEER_PORT,
+    path: PEER_PATH,
     config: { 'iceServers': [
     { url: 'stun:stun.l.google.com:19302' },
     { url: 'stun:stun1.l.google.com:19302' },
@@ -17,6 +17,8 @@ var peerOptions = {
 { url: 'stun:stun.voxgratia.org' }
   ]}, debug: false
 }
+
+console.log(peerOptions)
 
 var myPeer = new Peer(USERNAME.toLowerCase(), peerOptions);
 //const myAudio = document.createElement('audio')
@@ -86,19 +88,16 @@ socket.on('coordinates-update', coordinates => {
     var primaryVolumes = coordinates[username]
     if(!primaryVolumes) return;
     for (volumeUser in primaryVolumes){
-      //primary volumes: {"stijnj07":50,"itzsumm":31}
         userAudio = document.getElementById(volumeUser)
         userDistance = primaryVolumes[volumeUser]
 
-        if(userDistance <= 40){
-          if(userAudio !== null) {
-            const userVolume = 1 - (userDistance / 40)
-            userAudio.volume = userVolume;
-          }
-        }
-        else {
-          if(userAudio !== null) {
-            userAudio.volume = 0;
+        if(userAudio !== null) {
+          if(userDistance <= 40){
+              const userVolume = 1 - (userDistance / 40)
+              userAudio.volume = userVolume;
+            }
+          else {
+              userAudio.volume = 0;
           }
         }
       }
@@ -108,6 +107,10 @@ myPeer.on('open', id => {
   socket.emit('join-room', ROOM_ID, id)
 })
 
+/* This is called whenever a new user joins the call
+ * This function sends the audio stream of the new user to the existing users in the call
+ * and adds the audio element for that user.
+ */
 function connectToNewUser(userId, stream) {
   console.log("CALLING NEW USER", userId)
   const call = myPeer.call(userId, stream)
