@@ -18,8 +18,6 @@ var peerOptions = {
   ]}, debug: false
 }
 
-console.log(peerOptions)
-
 var myPeer = new Peer(USERNAME.toLowerCase(), peerOptions);
 //const myAudio = document.createElement('audio')
 //myAudio.muted = true
