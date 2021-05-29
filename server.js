@@ -67,12 +67,6 @@ app.post('/api/distances', (req, res) => {
   console.log("COORDINATE API CALLED")
 })
 
-app.get('/api/peerconfig', (req, res) => {
-
-
-
-});
-
 io.on('connection', socket => {
   socket.on('join-room', (roomId, userId) => {
 
