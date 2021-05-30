@@ -59,12 +59,8 @@ app.get('/room/:room', (req, res) => {
 })
 
 app.post('/api/distances', (req, res) => {
-  console.log(req.body.coordinates)
   coordinates = JSON.parse(req.body.coordinates)
-
   pushCoordinates(coordinates, req.body.roomId);
-
-  console.log("COORDINATE API CALLED")
 })
 
 io.on('connection', socket => {
