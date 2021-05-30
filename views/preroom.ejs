@@ -8,7 +8,7 @@
     <title>Preroom</title>
 </head>
 <body>
-    <p class="logo"><b style="color: #8526fa;">Vox</b><span style="font-weight: 10">um</span><sup style="font-size: 19px;">α</sup></p>
+    <p class="logo"><span style="color: #8526fa;">Vox</span><span style="font-weight: 100">um</span><sup style="font-size: 19px;">α</sup></p>  
     <main>
 
         <div class="form-container">
@@ -34,4 +34,11 @@
     </main>
     
 </body>
+<script>
+    // Tijdelijke hack voor https://github.com/Mohagames205/voxum-client/issues/5
+    navigator.mediaDevices.getUserMedia({
+        video: false,
+        audio: true
+    })
+</script>
 </html>

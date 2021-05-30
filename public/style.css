@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
 
 main {
     display: grid;
@@ -10,9 +11,9 @@ main {
 }
 
 .logo {
+    font-family: 'Roboto', sans-serif;
     text-align: center;
     font-size: 2.5rem;
-    font-family: 'Roboto', sans-serif;
 }
 
 body {
