@@ -1,11 +1,11 @@
 const socket = io('/')
 const audioGrid = document.getElementById('audio-grid')
 const userElement = document.getElementById("user-list")
-const audioSources = {};
 
 var peerOptions = {
-    host: 'voicify-web.herokuapp.com',
-    path: '/peerjs',
+    host: PEER_HOST,
+    port: PEER_PORT,
+    path: PEER_PATH,
     config: { 'iceServers': [
     { url: 'stun:stun.l.google.com:19302' },
     { url: 'stun:stun1.l.google.com:19302' },
@@ -18,7 +18,7 @@ var peerOptions = {
   ]}, debug: false
 }
 
-var myPeer = new Peer(USERNAME, peerOptions);
+var myPeer = new Peer(USERNAME.toLowerCase(), peerOptions);
 //const myAudio = document.createElement('audio')
 //myAudio.muted = true
 const peers = {}
@@ -47,8 +47,8 @@ navigator.mediaDevices.getUserMedia({
   })
 
   socket.on('user-connected', (userId) => {
-    //setTimeout(connectToNewUser,1000,userId,stream)
-    connectToNewUser(userId, stream)
+    setTimeout(connectToNewUser,1500,userId,stream)
+    //connectToNewUser(userId, stream)
   })
 })
 
@@ -71,27 +71,31 @@ socket.on("user-list-update", (userList) => {
 socket.on('user-disconnected', userId => {
   if (peers[userId]) peers[userId].close()
   delete peers[userId]
+
+  var audio = document.getElementById(userId);
+  if(audio !== null) {
+    audio.remove();
+  }
+
   console.log("User has disconnected", userId)
 })
+
+
 
 socket.on('coordinates-update', coordinates => {
     var primaryVolumes = coordinates[username]
     if(!primaryVolumes) return;
     for (volumeUser in primaryVolumes){
-
-      //primary volumes: {"stijnj07":50,"itzsumm":31}
         userAudio = document.getElementById(volumeUser)
         userDistance = primaryVolumes[volumeUser]
 
-        if(userDistance <= 40){
-          if(userAudio !== null) {
-            const userVolume = 1 - (userDistance / 40)
-            userAudio.volume = userVolume;
-          }
-        }
-        else {
-          if(userAudio !== null) {
-            userAudio.volume = 0;
+        if(userAudio !== null) {
+          if(userDistance <= 40){
+              const userVolume = 1 - (userDistance / 40)
+              userAudio.volume = userVolume;
+            }
+          else {
+              userAudio.volume = 0;
           }
         }
       }
@@ -101,6 +105,10 @@ myPeer.on('open', id => {
   socket.emit('join-room', ROOM_ID, id)
 })
 
+/* This is called whenever a new user joins the call
+ * This function sends the audio stream of the new user to the existing users in the call
+ * and adds the audio element for that user.
+ */
 function connectToNewUser(userId, stream) {
   console.log("CALLING NEW USER", userId)
   const call = myPeer.call(userId, stream)

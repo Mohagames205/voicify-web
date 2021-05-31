@@ -4,25 +4,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
     <title>Preroom</title>
 </head>
 <body>
+    <p class="logo"><span style="color: #8526fa;">Vox</span><span style="font-weight: 100">um</span><sup style="font-size: 19px;">α</sup></p>  
+    <main>
 
-    <form action="/room/join" method="POST">
-        <h2>Join room</h2>
-        <label for="username">Username</label>
-        <input  name="username" id="username"><br><br>
-
-        <label for="roomuuid">Room ID</label>
-        <input name="uuid" id="roomuuid"><br><br>
-        <button>Join</button>
-    </form>
-    <br>
-    <form action="/room/create" method="POST">
-        <h2>Create room</h2>
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username"><br><br>
-        <button type="submit">Create</button>
-    </form>
+        <div class="form-container">
+            <form action="/room/join" method="POST" id="test">
+                <h2>Join room</h2>
+                <label for="username"><p>Username</p></label>
+                <input  name="username" id="username"><br><br>
+    
+                <label for="roomuuid"><p>Room ID</p></label>
+                <input name="uuid" id="roomuuid"><br><br>
+                <button>Join</button>
+            </form>
+        </div>
+        <div class="form-container">
+            <form action="/room/create" method="POST">
+                <h2>Create room</h2>
+                <label for="username"><p>Username</p></label>
+                <input type="text" name="username" id="username"><br><br>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+            
+    </main>
+    
 </body>
+<script>
+    // Tijdelijke hack voor https://github.com/Mohagames205/voxum-client/issues/5
+    navigator.mediaDevices.getUserMedia({
+        video: false,
+        audio: true
+    })
+</script>
 </html>
