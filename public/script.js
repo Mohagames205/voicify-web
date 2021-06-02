@@ -55,16 +55,15 @@ navigator.mediaDevices.getUserMedia({
 socket.on("user-list-update", (userList) => {
   userElement.innerHTML = '';
   for(const user of userList){
-    var li = document.createElement("li");
+    var div = document.createElement("div");
+    div.className = "user";
+    div.innerHTML = `<div class='skin'><img id=${user}img width='90px' height='90px' src='https://via.placeholder.com/90'/></div><div class='text'>${user}</div>`
 
     if(username == user){
-      li.style.color = "green";
-      li.style.fontWeight = "bold";
+      div.style.backgroundColor = "#0f3605"
     }
-
-    li.appendChild(document.createTextNode(user));
     
-    userElement.appendChild(li);
+    userElement.appendChild(div);
   }
 })
 
@@ -99,7 +98,15 @@ socket.on('coordinates-update', coordinates => {
           }
         }
       }
-})
+});
+
+socket.on('playerheads-update', socketData => {
+  var skinData = socketData[username];
+  if(!skinData) return;
+  
+  img = document.getElementById(username + "img");
+  img.setAttribute("src", "data:image/png;base64," + skinData);
+});
 
 myPeer.on('open', id => {
   socket.emit('join-room', ROOM_ID, id)
