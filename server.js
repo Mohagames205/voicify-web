@@ -19,22 +19,37 @@ const socket = net.createServer(function(socket) {
 socket.listen(8080);
 
 socket.on('connection', (tcpSocket) => {
-    tcpSocket.on('data', function(chunk) {
-        socketData = JSON.parse(chunk.toString());
-        var inboundData = socketData["data"];
-        var command = socketData["command"];
-        var auth = socketData["auth"];
+    let chunk = "";
+    tcpSocket.on('data', function(data) {
+      chunk += data.toString();
+      let d_index = chunk.indexOf(';');
+      while (d_index > -1) {         
+          try {
+              let string = chunk.substring(0, d_index);
+              let json = JSON.parse(string);
+              pages.addJSON(string);
+              console.log(json.pagename);
 
-        switch(command){
-          case "update-coordinates":
-            pushCoordinates(inboundData, 'mo');
-            break;
-          
-          case "update-playerheads":
-            pushPlayerHeads(inboundData, 'mo');
-            break;
+              var inboundData = socketData["data"];
+              var command = socketData["command"];
+              var auth = socketData["auth"];
 
-        }
+              switch(command){
+                case "update-coordinates":
+                  pushCoordinates(inboundData, 'mo');
+                  break;
+                
+                case "update-playerheads":
+                  pushPlayerHeads(inboundData, 'mo');
+                  break;
+              }
+          }
+          catch(e){
+              console.log(e);
+          }
+          chunk = chunk.substring(d_index+1);
+          d_index = chunk.indexOf(';');
+      }      
     });
 
     tcpSocket.on('error', (err) => {
