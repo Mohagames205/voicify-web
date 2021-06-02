@@ -73,7 +73,7 @@ button:hover {
 
 #user-list {
     display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 2fr));
+  grid-template-columns: repeat(auto-fit, minmax(480px, 2fr));
   column-count: 2;
     gap: 10px;
 }
