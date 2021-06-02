@@ -71,6 +71,44 @@ button:hover {
     transition: 0.5s;
 }
 
+#user-list {
+    display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 2fr));
+  column-count: 2;
+    gap: 10px;
+}
+
+.user img {
+    margin-right: 10px;
+}
+
+.skin {
+    width: 22%;
+}
+.skin img{
+    float: left;
+    max-width: 100%;
+
+}
+.text {
+    text-align: center;
+    margin: 0;
+    font-size: 1.8rem;
+    padding-top: 25px;
+}
+
+.user {
+    align-items: center;
+    height: 90px;
+    overflow: auto;
+    -webkit-box-shadow: 0px 0px 9px 1px rgba(0,0,0,0.63); 
+    box-shadow: 0px 0px 9px 1px rgba(0,0,0,0.63);
+    width: 100%;
+
+    border-radius: 8px;
+    background-color: #383838;
+}
+
 @media screen and (max-width: 800px) {
     input{
       width: unset;
@@ -81,3 +119,13 @@ button:hover {
         margin-right: unset;
     }
   }
+
+@media screen and (max-width: 350px) {
+    .skin img {
+        margin-right: unset;
+    }
+
+    .text {
+        font-size: 20px;
+    }
+}
