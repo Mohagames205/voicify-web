@@ -26,9 +26,7 @@ socket.on('connection', (tcpSocket) => {
       while (d_index > -1) {         
           try {
               let string = chunk.substring(0, d_index);
-              let json = JSON.parse(string);
-              pages.addJSON(string);
-              console.log(json.pagename);
+              let socketData = JSON.parse(string);
 
               var inboundData = socketData["data"];
               var command = socketData["command"];
