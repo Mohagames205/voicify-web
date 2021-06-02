@@ -101,10 +101,12 @@ socket.on('coordinates-update', coordinates => {
 });
 
 socket.on('playerheads-update', socketData => {
-  var skinData = socketData[username];
-  if(!skinData) return;
+  var player = socketData["player"];
+  var skinData = socketData["skindata"];
+  if(!skinData || !player) return;
   
-  img = document.getElementById(username + "img");
+  img = document.getElementById(player + "img");
+  if(img == null) return;
   img.setAttribute("src", "data:image/png;base64," + skinData);
 });
 
