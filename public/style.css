@@ -40,6 +40,10 @@ p {
     text-align: center;
 }
 
+.content {
+    margin-left: 8vw;
+    margin-right: 8vw;
+}
 
 input {
     width: 17rem;
@@ -118,6 +122,15 @@ button:hover {
         margin-left: unset;
         margin-right: unset;
     }
+
+    .content {
+        margin-left: unset;
+        margin-right: unset;
+    }
+
+    .user {
+        width: 95vw;
+    }
   }
 
 @media screen and (max-width: 350px) {
@@ -128,4 +141,5 @@ button:hover {
     .text {
         font-size: 20px;
     }
+    
 }
