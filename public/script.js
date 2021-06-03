@@ -31,13 +31,14 @@ navigator.mediaDevices.getUserMedia({
   audio: true
 }).then(stream => {
   //addAudioStream(myAudio, stream)
- 
+  addUserElement(username);
   myPeer.on('call', call => {
     
     call.answer(stream)
     console.log("ANSWERED CALL AND CREATED ELEMENT FROM:", call.peer)
     const audio = document.createElement('audio')
     audio.id = call.peer
+    addUserElement(call.peer)
 
     call.on('stream', userAudioStream => {
       peers[call.peer] = call
@@ -47,24 +48,10 @@ navigator.mediaDevices.getUserMedia({
   })
 
   socket.on('user-connected', (userId) => {
+    addUserElement(userId);
     setTimeout(connectToNewUser,1500,userId,stream)
     //connectToNewUser(userId, stream)
   })
-})
-
-socket.on("user-list-update", (userList) => {
-  userElement.innerHTML = '';
-  for(const user of userList){
-    var div = document.createElement("div");
-    div.className = "user";
-    div.innerHTML = `<div class='skin'><img id=${user}img width='90px' height='90px' src='https://via.placeholder.com/90'/></div><div class='text'>${user}</div>`
-
-    if(username == user){
-      div.style.backgroundColor = "#0f3605"
-    }
-    
-    userElement.appendChild(div);
-  }
 })
 
 socket.on('user-disconnected', userId => {
@@ -76,10 +63,10 @@ socket.on('user-disconnected', userId => {
     audio.remove();
   }
 
+  removeUserElement(userId);
+
   console.log("User has disconnected", userId)
 })
-
-
 
 socket.on('coordinates-update', coordinates => {
     var primaryVolumes = coordinates[username]
@@ -127,16 +114,37 @@ function connectToNewUser(userId, stream) {
   audio.id = userId;
 
   call.on('stream', userAudioStream => {
-    console.log("SENDING AUDIO STREAM TO:", call.peer)
-    addAudioStream(audio, userAudioStream)
+    console.log("SENDING AUDIO STREAM TO:", call.peer);
+    addAudioStream(audio, userAudioStream);
   })
   call.on('close', () => {
-    console.log("CLOSING:", call.peer)
-    audio.remove()
+    console.log("CLOSING:", call.peer);
+    audio.remove();
   })
 
-  console.log("ADDING TO PEERS LIST")
-  peers[userId] = call
+  console.log("ADDING TO PEERS LIST");
+  peers[userId] = call;
+}
+
+
+function removeUserElement(user) {
+  var userEl = document.getElementById(`${user}-profile`);
+  if(userEl !== null) {
+      userEl.remove();
+  }
+}
+
+function addUserElement(user) {
+  var div = document.createElement("div");
+  div.className = "user";
+  div.id = `${user}-profile`
+  div.innerHTML = `<div class='skin'><img id=${user}img width='90px' height='90px' src='https://via.placeholder.com/90'/></div><div class='text'>${user}</div>`
+
+  if(username == user){
+    div.style.backgroundColor = "#0f3605"
+  }
+  
+  userElement.appendChild(div);
 }
 
 function addAudioStream(audio, stream) {

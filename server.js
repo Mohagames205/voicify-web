@@ -83,11 +83,8 @@ io.on('connection', socket => {
     socket.join(roomId)
     socket.to(roomId).emit('user-connected', userId)
     socket.username = userId;
-    
-    updateUserlist(socket, roomId)
 
     socket.on('disconnect', () => {
-      updateUserlist(socket, roomId)
       socket.to(roomId).emit('user-disconnected', userId)
     })
 
@@ -100,18 +97,6 @@ function pushCoordinates(coordinates, roomId){
 
 function pushPlayerHeads(headData, roomId){
   io.to(roomId).emit('playerheads-update', headData);
-}
-
-function updateUserlist(socket, roomId){
-  clientNames = []
-
-      io.in(roomId).fetchSockets().then(clients => {
-        for(const client of clients){
-            clientNames.push(client.username);
-        }
-
-        io.to(roomId).emit('user-list-update', clientNames);
-      });
 }
 
 server.listen(process.env.PORT || 80);
