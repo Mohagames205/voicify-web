@@ -89,12 +89,11 @@ socket.on('coordinates-update', coordinates => {
 
 function displayCachedSkins(cachedPlayerHeads) {
   for(const player in cachedPlayerHeads) {
-      console.log(player);
       const skinData = cachedPlayerHeads[player];
-      console.log(skinData)
+
       img = document.getElementById(player.toLowerCase() + "img");
       if(img == null) return;
-      console.log(img)
+
       img.setAttribute("src", "data:image/png;base64," + skinData);
 
   }
@@ -103,7 +102,7 @@ function displayCachedSkins(cachedPlayerHeads) {
 socket.on('playerheads-update', socketData => {
   var player = socketData["player"];
   var skinData = socketData["skindata"];
-  
+
   if(!skinData || !player) return;
   
   img = document.getElementById(`${player}` + "img");
