@@ -16,6 +16,8 @@ const socket = net.createServer(function(socket) {
 	socket.pipe(socket);
 });
 
+var playerHeadCache = [];
+
 socket.listen(8080);
 
 socket.on('connection', (tcpSocket) => {
@@ -77,11 +79,19 @@ app.get('/room/:room', (req, res) => {
   res.render('room', { roomId: req.params.room, username: req.query.username, peerSettings: peerConfig });
 })
 
+app.get('/api/playerheads', (req, res) => {
+  let obj = { }
+  for (var key in playerHeadCache) {
+    obj[key] = playerHeadCache[key]
+  }
+  res.json(obj);
+});
+
 io.on('connection', socket => {
   socket.on('join-room', (roomId, userId) => {
 
-    socket.join(roomId)
-    socket.to(roomId).emit('user-connected', userId)
+    socket.join(roomId);
+    socket.to(roomId).emit('user-connected', userId);
     socket.username = userId;
 
     socket.on('disconnect', () => {
@@ -96,6 +106,10 @@ function pushCoordinates(coordinates, roomId){
 }
 
 function pushPlayerHeads(headData, roomId){
+
+  // cache the playerheads
+  playerHeadCache[headData.player] = headData.skindata;
+
   io.to(roomId).emit('playerheads-update', headData);
 }
 

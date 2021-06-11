@@ -87,12 +87,25 @@ socket.on('coordinates-update', coordinates => {
       }
 });
 
+function displayCachedSkins(cachedPlayerHeads) {
+  for(const player in cachedPlayerHeads) {
+      console.log(player);
+      const skinData = cachedPlayerHeads[player];
+      console.log(skinData)
+      img = document.getElementById(player.toLowerCase() + "img");
+      if(img == null) return;
+      console.log(img)
+      img.setAttribute("src", "data:image/png;base64," + skinData);
+
+  }
+}
+
 socket.on('playerheads-update', socketData => {
   var player = socketData["player"];
   var skinData = socketData["skindata"];
   if(!skinData || !player) return;
   
-  img = document.getElementById(player + "img");
+  img = document.getElementById(`${player}` + "img");
   if(img == null) return;
   img.setAttribute("src", "data:image/png;base64," + skinData);
 });
@@ -145,6 +158,15 @@ function addUserElement(user) {
   }
   
   userElement.appendChild(div);
+
+
+  // load cool things
+  fetch("/api/playerheads")
+  .then(data => {
+    data.json().then((jsonData) => {
+      displayCachedSkins(jsonData);
+    });
+  })
 }
 
 function addAudioStream(audio, stream) {
