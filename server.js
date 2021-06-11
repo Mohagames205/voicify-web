@@ -16,7 +16,10 @@ const socket = net.createServer(function(socket) {
 	socket.pipe(socket);
 });
 
-var playerHeadCache = [];
+const playerHeadCache = [];
+const commandMap = []
+
+registerCommands();
 
 socket.listen(8080);
 
@@ -34,18 +37,10 @@ socket.on('connection', (tcpSocket) => {
               var command = socketData["command"];
               var auth = socketData["auth"];
 
-              switch(command){
-                case "update-coordinates":
-                  pushCoordinates(inboundData, 'mo');
-                  break;
-                
-                case "update-playerheads":
-                  pushPlayerHeads(inboundData, 'mo');
-                  break;
-              }
+              handleCommand(command, inboundData);
           }
           catch(e){
-              console.log(e);
+            console.error(e);
           }
           chunk = chunk.substring(d_index+1);
           d_index = chunk.indexOf(';');
@@ -53,9 +48,8 @@ socket.on('connection', (tcpSocket) => {
     });
 
     tcpSocket.on('error', (err) => {
-        console.log(err.message);
+        console.error(err);
     })
-
 })
 
 app.use(express.json());       // to support JSON-encoded bodies
@@ -106,11 +100,20 @@ function pushCoordinates(coordinates, roomId){
 }
 
 function pushPlayerHeads(headData, roomId){
-
   // cache the playerheads
   playerHeadCache[headData.player] = headData.skindata;
+  console.log("triggered")
 
   io.to(roomId).emit('playerheads-update', headData);
+}
+
+function registerCommands() {
+  commandMap["update-coordinates"] = pushCoordinates;
+  commandMap["update-playerheads"] = pushPlayerHeads;
+}
+
+function handleCommand(command, data, roomId = "mo"){
+  commandMap[command](data, roomId);
 }
 
 server.listen(process.env.PORT || 80);
