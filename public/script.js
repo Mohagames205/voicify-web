@@ -103,6 +103,7 @@ function displayCachedSkins(cachedPlayerHeads) {
 socket.on('playerheads-update', socketData => {
   var player = socketData["player"];
   var skinData = socketData["skindata"];
+  
   if(!skinData || !player) return;
   
   img = document.getElementById(`${player}` + "img");
@@ -158,7 +159,6 @@ function addUserElement(user) {
   }
   
   userElement.appendChild(div);
-
 
   // load cool things
   fetch("/api/playerheads")
