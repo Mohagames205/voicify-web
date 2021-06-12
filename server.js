@@ -35,7 +35,7 @@ socket.on('connection', (tcpSocket) => {
 
               const inboundData = socketData["data"];
               const command = socketData["command"];
-              const auth = socketData["auth"];
+              const __auth = socketData["auth"];
 
               handleCommand(command, inboundData);
           }
