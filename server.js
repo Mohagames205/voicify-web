@@ -27,23 +27,23 @@ socket.on('connection', (tcpSocket) => {
     let chunk = "";
     tcpSocket.on('data', function(data) {
       chunk += data.toString();
-      let d_index = chunk.indexOf(';');
-      while (d_index > -1) {         
+      let dIndex = chunk.indexOf(';');
+      while (dIndex > -1) {         
           try {
-              let string = chunk.substring(0, d_index);
-              let socketData = JSON.parse(string);
+              const string = chunk.substring(0, dIndex);
+              const socketData = JSON.parse(string);
 
-              var inboundData = socketData["data"];
-              var command = socketData["command"];
-              var auth = socketData["auth"];
+              const inboundData = socketData["data"];
+              const command = socketData["command"];
+              const auth = socketData["auth"];
 
               handleCommand(command, inboundData);
           }
           catch(e){
             console.error(e);
           }
-          chunk = chunk.substring(d_index+1);
-          d_index = chunk.indexOf(';');
+          chunk = chunk.substring(dIndex+1);
+          dIndex = chunk.indexOf(';');
       }      
     });
 
@@ -57,7 +57,7 @@ app.use(express.urlencoded({extended: true})); // to support URL-encoded bodies
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
-app.get('/', (req, res) => {
+app.get('/', (__req, res) => {
   res.render('preroom');
 })
 
@@ -73,9 +73,9 @@ app.get('/room/:room', (req, res) => {
   res.render('room', { roomId: req.params.room, username: req.query.username, peerSettings: peerConfig });
 })
 
-app.get('/api/playerheads', (req, res) => {
-  let obj = { }
-  for (var key in playerHeadCache) {
+app.get('/api/playerheads', (__req, res) => {
+  const obj = { }
+  for (const key in playerHeadCache) {
     obj[key] = playerHeadCache[key]
   }
   res.json(obj);
