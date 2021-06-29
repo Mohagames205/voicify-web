@@ -81,6 +81,13 @@ app.get('/api/playerheads', (__req, res) => {
   res.json(obj);
 });
 
+app.post('/api/playerheads/upload', (req, __res) => {
+  const playerHeadData = JSON.parse(req.body.data);
+  const roomId = req.body.roomId;
+  
+  pushPlayerHeads(playerHeadData, roomId);
+});
+
 io.on('connection', socket => {
   socket.on('join-room', (roomId, userId) => {
 
@@ -100,16 +107,12 @@ function pushCoordinates(coordinates, roomId){
 }
 
 function pushPlayerHeads(headData, roomId){
-  // cache the playerheads
   playerHeadCache[headData.player] = headData.skindata;
-  console.log("triggered")
-
   io.to(roomId).emit('playerheads-update', headData);
 }
 
 function registerCommands() {
   commandMap["update-coordinates"] = pushCoordinates;
-  commandMap["update-playerheads"] = pushPlayerHeads;
 }
 
 function handleCommand(command, data, roomId = "mo"){
