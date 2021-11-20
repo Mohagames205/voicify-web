@@ -100,6 +100,14 @@ io.on('connection', socket => {
     })
 
   })
+
+  socket.on('other-user-talking', (roomId, userId) => {
+      socket.to(roomId).emit('other-user-talking', userId);
+  })
+
+  socket.on('other-user-not-talking', (roomId, userId) => {
+    socket.to(roomId).emit('other-user-not-talking', userId);
+})
 })
 
 function pushCoordinates(coordinates, roomId){

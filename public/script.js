@@ -32,6 +32,9 @@ navigator.mediaDevices.getUserMedia({
 }).then(stream => {
   //addAudioStream(myAudio, stream)
   addUserElement(username);
+
+  var speechEvents = hark(stream, {});
+
   myPeer.on('call', call => {
     
     call.answer(stream)
@@ -52,7 +55,27 @@ navigator.mediaDevices.getUserMedia({
     setTimeout(connectToNewUser,1500,userId,stream)
     //connectToNewUser(userId, stream)
   })
+
+  speechEvents.on("speaking", function(){
+    setUserIsTalking(username);
+    socket.emit('other-user-talking', ROOM_ID, username);
+  })
+
+  speechEvents.on("stopped_speaking", function(){
+    setUserIsNotTalking(username);
+    socket.emit('other-user-not-talking', ROOM_ID, username);
+  })
+
+  
+  socket.on('other-user-talking', userId => {
+    setUserIsTalking(userId);
+  }) 
+
+  socket.on('other-user-not-talking', userId => {
+    setUserIsNotTalking(userId);
+  })
 })
+
 
 socket.on('user-disconnected', userId => {
   if (peers[userId]) peers[userId].close()
@@ -167,6 +190,22 @@ function addUserElement(user) {
       displayCachedSkins(jsonData);
     });
   })
+}
+
+function setUserIsTalking(userId) {
+  var userProfile = document.getElementById(`${userId}-profile`);
+  if(userProfile != null){
+    userProfile.style.borderStyle = "solid";
+    userProfile.style.borderColor = "green";
+  }
+}
+
+
+function setUserIsNotTalking(userId) {
+  var userProfile = document.getElementById(`${userId}-profile`);
+  if(userProfile != null){
+    userProfile.style.border = "unset"
+  }
 }
 
 function addAudioStream(audio, stream) {
