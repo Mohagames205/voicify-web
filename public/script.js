@@ -1,4 +1,4 @@
-orrconst socket = io('/')
+const socket = io('/')
 const audioGrid = document.getElementById('audio-grid')
 const userElement = document.getElementById("user-list")
 
