@@ -23,6 +23,13 @@ services:
       - "3000:9000"
     networks:
       - app-network
+  redis:
+    image: redis
+    ports:
+      - ":6379"
+    networks:
+      - app-network
+    command: redis-server --requirepass bigbananas
       
 networks:
   app-network:
