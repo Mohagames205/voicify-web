@@ -12,19 +12,20 @@
     <main>
 
         <div class="form-container">
-            <form action="/room/join" method="POST" id="test">
+            <form action="/auth" method="GET" id="test">
                 <h2>Join room</h2>
                 <label for="username"><p>Username</p></label>
                 <input  name="username" id="username"><br><br>
     
                 <label for="roomuuid"><p>Room ID</p></label>
-                <input name="uuid" id="roomuuid"><br><br>
+                <input name="roomuuid" id="roomuuid"><br><br>
                 <button>Join</button>
             </form>
         </div>
         <div class="form-container">
             <form action="/room/create" method="POST">
                 <h2>Create room</h2>
+                <p style="text-align: left;">Dit is een anonymous room, dus hiervoor hoef je je niet te verifieren. Het nadeel is dat proximity call niet wordt ondersteund.</p>
                 <label for="username"><p>Username</p></label>
                 <input type="text" name="username" id="username"><br><br>
                 <button type="submit">Create</button>

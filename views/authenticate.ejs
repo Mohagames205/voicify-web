@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Voxum | Authenticate</title>
+    <script>
+        const ROOM_ID = "<%= roomId %>"
+    </script>
+</head>
+<body>
+    <p class="logo"><span style="color: #8526fa;">Vox</span><span style="font-weight: 100">um</span><sup style="font-size: 19px;">α</sup></p>  
+    <main>
+    
+    <div class="form-container">
+        <div class="splitted-info">
+                <div class="form-group"  style="width: 100%;">
+                    <form onSubmit="event.preventDefault(); demandAuthCode()" id="demand_code">
+                        <h2>Verificatie</h2>
+                        <label for="username"><p>Minecraft spelernaam</p></label>
+                        <input  name="username" id="username"><br><br>
+                        <button id="demand_code_button">Vraag code</button>
+                    </form>
+                    <form onSubmit="event.preventDefault(); verifyAuthCode()" id="enter_code" style="display: none;">
+                        <label for="username"><p>Verificatiecode</p></label>
+                        <input  name="code" id="code"><br><br>
+                        <button>Controleer code</button>
+                    </form>
+                </div>
+            <p class="info-block">
+                Je kan je account zeer eenvoudig verifieren met Voxum SafeMC. Het enige wat je moet doen is je spelernaam opgeven en dan de juiste verificatiecode opgeven.
+                Op dit moment kun je je alleen verifieren op <b>GalactixPE</b>. De verificatie is zeer simpel en bedoeld om jouw account veilig te houden.
+            </p>
+        </div>
+        
+    </div>
+    </main>
+    
+    <script>
+        var globalUsername = null;
+
+        function demandAuthCode(){
+            var formEl = document.forms.demand_code;
+            
+
+            var formData = new FormData(formEl);
+            var name = formData.get('username');
+            globalUsername = name;
+            
+            var secondForm = document.forms.enter_code;
+            secondForm.style.display = 'unset';
+
+            //disable form input
+            document.getElementById('username').disabled = true;
+            document.getElementById('demand_code_button').style.display = 'none';
+
+            postData('/createcode', {username: name})
+        }
+
+        function verifyAuthCode(){
+            var secondForm = document.forms.enter_code;
+
+            var formData = new FormData(secondForm);
+            var name = globalUsername;
+            var verifyCode = formData.get('code');
+
+            fetch('/verifycode?' + new URLSearchParams({
+                code: verifyCode,
+                username: globalUsername
+            }))
+            .then(result => result.json())
+            .then(data => {
+                if(!data.is_correct){
+                    showFailure();
+                } else {
+                    window.location.href = '/authenticate?' + new URLSearchParams({
+                        username: globalUsername, 
+                        code: verifyCode,
+                        roomId: ROOM_ID,
+                    });
+                }
+            });
+        }
+
+        function showFailure(){
+            Swal.fire({
+                title: 'Error!',
+                text: 'De verificatiecode is incorrect!',
+                icon: 'error',
+                confirmButtonText: 'Opnieuw proberen'
+            })
+
+            document.getElementById('code').style.border = 'red solid 1px';
+        }
+
+        async function postData(url = '', data = {}) {
+        // Default options are marked with *
+        const response = await fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        });
+        return response.json(); // parses JSON response into native JavaScript objects
+        }
+    </script>
+
+</body>
+</html>
