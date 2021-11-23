@@ -4,6 +4,12 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const { v4: uuidV4 } = require('uuid');
 const net = require('net');
+const redis = require('redis');
+const { randomInt } = require('crypto');
+var session = require('express-session');
+const { env } = require('process');
+
+
 require("dotenv").config();
 
 const peerConfig = {
@@ -12,9 +18,18 @@ const peerConfig = {
   path: process.env.PEER_JS_PATH
 };
 
+const redisConfig = {
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD
+}
+
+
 const socket = net.createServer(function(socket) {
 	socket.pipe(socket);
 });
+
+const client = new redis.createClient(redisConfig);
 
 const playerHeadCache = [];
 const commandMap = []
@@ -56,6 +71,16 @@ app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded({extended: true})); // to support URL-encoded bodies
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: process.env.COOKIES_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    secure: false,
+    maxAge: 2592e5
+  },
+}))
 
 app.get('/', (__req, res) => {
   res.render('preroom');
@@ -70,7 +95,59 @@ app.post("/room/join", (req, res) => {
 })
 
 app.get('/room/:room', (req, res) => {
-  res.render('room', { roomId: req.params.room, username: req.query.username, peerSettings: peerConfig });
+  if(req.session.user && req.session.user == req.query.username.toLowerCase()){
+    res.render('room', { roomId: req.params.room, username: req.query.username, peerSettings: peerConfig });
+    return;
+  }
+  res.render('authenticate', {roomId: req.params.room});
+})
+
+app.get('/auth', (req, res) => {
+  if(!req.session.user){
+    res.render('authenticate', {roomId: req.query.roomuuid});
+    return;
+  }
+  username = req.session.user;
+  res.redirect(`/room/${username}?username=${username}`);
+})
+
+app.get('/askcode', (req, res) => {
+    if(req.query.auth && req.query.username){
+        auth = req.query.auth;
+        username = req.query.username;
+        if(auth == process.env.API_SECRET){
+          client.get(req.query.username.toLowerCase(), (err, reply) => {
+            res.json({code: reply})
+          });
+          return;
+        }
+    }
+    res.json({error: 'Authentication failed!'});
+})
+
+app.post('/createcode', (req, res) => {
+  client.set(req.body.username.toLowerCase(), randomInt(10000, 99999), "EX", 60 * 2);
+  res.status(200);
+})
+
+app.get('/verifycode', (req, res) => {
+  client.get(req.query.username.toLowerCase(), (err, reply) => {
+    res.json({is_correct: (reply == req.query.code)})
+  });
+})
+
+app.get('/authenticate', (req, res) => {
+  client.get(req.query.username.toLowerCase(), (err, reply) => {
+    if(reply == req.query.code){
+      req.session.user = req.query.username.toLowerCase();
+      username = req.query.username.toLowerCase();
+      roomId = req.query.roomId;
+      console.log(roomId);
+      res.redirect(`/room/${roomId}/?username=${username}`);
+      return;
+    }
+    res.json({error: 'Authentication code is incorrect.'})
+  });
 })
 
 app.get('/api/playerheads', (__req, res) => {
