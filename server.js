@@ -108,7 +108,7 @@ app.get('/auth', (req, res) => {
     return;
   }
   username = req.session.user;
-  res.redirect(`/room/${username}?username=${username}`);
+  res.redirect(`/room/${req.query.roomuuid}?username=${username}`);
 })
 
 app.get('/askcode', (req, res) => {
