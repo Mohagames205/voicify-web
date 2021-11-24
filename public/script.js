@@ -7,20 +7,14 @@ var peerOptions = {
     port: PEER_PORT,
     path: PEER_PATH,
     config: { 'iceServers': [
-    { url: 'stun:stun.l.google.com:19302' },
-    { url: 'stun:stun1.l.google.com:19302' },
-{ url: 'stun:stun2.l.google.com:19302' },
-{ url: 'stun:stun3.l.google.com:19302' },
-{ url: 'stun:stun4.l.google.com:19302' },
-{ url: 'stun:stun.voipbuster.com' },
-{ url: 'stun:stun.voipstunt.com' },
-{ url: 'stun:stun.voxgratia.org' }
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+{ urls: 'stun:stun2.l.google.com:19302' },
+{ urls: 'stun:stun3.l.google.com:19302' },
   ]}, debug: false
 }
 
 var myPeer = new Peer(USERNAME.toLowerCase(), peerOptions);
-//const myAudio = document.createElement('audio')
-//myAudio.muted = true
 const peers = {}
 
 // tijdelijke hack
@@ -30,7 +24,30 @@ navigator.mediaDevices.getUserMedia({
   video: false,
   audio: true
 }).then(stream => {
-  //addAudioStream(myAudio, stream)
+  startCallingService(stream);
+}).catch(function(err){
+  Swal.fire({
+    title: 'Error!',
+    text: 'Voxum heeft microfoontoegang nodig om te werken! De website zal niet correct werken.',
+    icon: 'error',
+    confirmButtonText: 'Sluiten'
+  })
+});
+
+if (navigator.mediaDevices.getUserMedia === undefined) {
+  var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+  getUserMedia({video: false, audio: true}, function(stream){
+    startCallingService(stream);
+  }, Swal.fire({
+    title: 'Error!',
+    text: 'Voxum heeft microfoontoegang nodig om te werken! De website zal niet correct werken.',
+    icon: 'error',
+    confirmButtonText: 'Sluiten'
+  }));
+}
+
+function startCallingService(stream){
   addUserElement(username);
 
   var speechEvents = hark(stream, {});
@@ -74,7 +91,7 @@ navigator.mediaDevices.getUserMedia({
   socket.on('other-user-not-talking', userId => {
     setUserIsNotTalking(userId);
   })
-})
+}
 
 
 socket.on('user-disconnected', userId => {
