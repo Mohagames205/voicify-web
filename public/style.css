@@ -121,6 +121,15 @@ input::placeholder{
     color: lightgray;
 }
 
+.notification{
+    font-size: 15px;
+    background-color: #8526fa9b;
+    padding: 10px;
+    width: 95%;
+    border-radius: 5px;
+    border: #6813cf solid 2px;
+    text-align: left;
+}
 
 .splitted-info {
     display: flex;

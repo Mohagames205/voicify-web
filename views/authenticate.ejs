@@ -25,7 +25,11 @@
                         <input  name="username" id="username"><br><br>
                         <button id="demand_code_button">Vraag code</button>
                     </form>
+                    
                     <form onSubmit="event.preventDefault(); verifyAuthCode()" id="enter_code" style="display: none;">
+                        <div class="notification">
+                            Voer <b>/voicelink</b> uit ingame en vul hier de code in die je ziet
+                        </div>
                         <label for="username"><p>Verificatiecode</p></label>
                         <input  name="code" id="code"><br><br>
                         <button>Controleer code</button>
