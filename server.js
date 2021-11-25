@@ -82,8 +82,8 @@ app.use(session({
   },
 }))
 
-app.get('/', (__req, res) => {
-  res.render('preroom');
+app.get('/', (req, res) => {
+  res.render('preroom', {user: req.session.user});
 })
 
 app.post("/room/create", (req, res) => {
@@ -95,20 +95,20 @@ app.post("/room/join", (req, res) => {
 })
 
 app.get('/room/:room', (req, res) => {
-  if(req.session.user && req.session.user == req.query.username.toLowerCase()){
-    res.render('room', { roomId: req.params.room, username: req.query.username, peerSettings: peerConfig });
+  if(req.session.user){
+    res.render('room', { roomId: req.params.room, username: req.session.user, peerSettings: peerConfig });
     return;
   }
-  res.render('authenticate', {roomId: req.params.room});
+  res.render('authenticate', {roomId: req.params.room, username: null});
 })
 
 app.get('/auth', (req, res) => {
   if(!req.session.user){
-    res.render('authenticate', {roomId: req.query.roomuuid});
-    return;
+    res.render('authenticate', {username: req.query.username, roomId: req.query.roomuuid});
+    return; 
   }
   username = req.session.user;
-  res.redirect(`/room/${req.query.roomuuid}?username=${username}`);
+  res.redirect(`/room/${req.query.roomuuid}`);
 })
 
 app.get('/askcode', (req, res) => {
@@ -142,8 +142,8 @@ app.get('/authenticate', (req, res) => {
       req.session.user = req.query.username.toLowerCase();
       username = req.query.username.toLowerCase();
       roomId = req.query.roomId;
-      console.log(roomId);
-      res.redirect(`/room/${roomId}/?username=${username}`);
+
+      res.redirect(`/room/${roomId}/`);
       return;
     }
     res.json({error: 'Authentication code is incorrect.'})
@@ -167,7 +167,6 @@ app.post('/api/playerheads/upload', (req, __res) => {
 
 io.on('connection', socket => {
   socket.on('join-room', (roomId, userId) => {
-
     socket.join(roomId);
     socket.to(roomId).emit('user-connected', userId);
     socket.username = userId;
@@ -186,6 +185,13 @@ io.on('connection', socket => {
     socket.to(roomId).emit('other-user-not-talking', userId);
 })
 })
+
+function getAllRooms(){
+  const rooms = io.of("/").adapter.rooms;
+  rooms.array.forEach(element => {
+    console.log(element);
+  });
+}
 
 function pushCoordinates(coordinates, roomId){
   io.to(roomId).emit('coordinates-update', coordinates);

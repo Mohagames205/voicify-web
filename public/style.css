@@ -113,6 +113,14 @@ button:hover {
     background-color: #383838;
 }
 
+input:disabled{
+    cursor: not-allowed;
+}
+
+input::placeholder{
+    color: lightgray;
+}
+
 
 .splitted-info {
     display: flex;

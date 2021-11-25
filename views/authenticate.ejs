@@ -8,7 +8,8 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Voxum | Authenticate</title>
     <script>
-        const ROOM_ID = "<%= roomId %>"
+        const ROOM_ID = "<%= roomId %>";
+        const USERNAME = "<%= username %>";
     </script>
 </head>
 <body>
@@ -42,12 +43,20 @@
     <script>
         var globalUsername = null;
 
+
+        if(USERNAME){
+            usernameInput = document.getElementById('username');
+            usernameInput.placeholder = USERNAME;
+            usernameInput.disabled = true;
+        }
+
         function demandAuthCode(){
             var formEl = document.forms.demand_code;
             
 
             var formData = new FormData(formEl);
-            var name = formData.get('username');
+            var name = formData.get('username') || USERNAME;
+            console.log(name)
             globalUsername = name;
             
             var secondForm = document.forms.enter_code;

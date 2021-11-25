@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/style.css">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+            const USER = "<%= user %>";
+    </script>
     <title>Preroom</title>
 </head>
 <body>
@@ -26,7 +29,6 @@
         <div class="form-container">
             <form action="/room/create" method="POST">
                 <h2>Create room</h2>
-                <p style="text-align: left;">Dit is een anonymous room, dus hiervoor hoef je je niet te verifieren. Het nadeel is dat proximity call niet wordt ondersteund.</p>
                 <label for="username"><p>Username</p></label>
                 <input type="text" name="username" id="username"><br><br>
                 <button type="submit">Create</button>
@@ -37,6 +39,13 @@
     
 </body>
 <script>
+
+    if(USER){
+        const usernameInput = document.getElementById('username');
+        usernameInput.placeholder = USER;
+        usernameInput.disabled = true;
+    }
+
     // Tijdelijke hack voor https://github.com/Mohagames205/voxum-client/issues/5
     navigator.mediaDevices.getUserMedia({
         video: false,
