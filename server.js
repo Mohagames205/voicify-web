@@ -126,7 +126,7 @@ app.get('/askcode', (req, res) => {
 })
 
 app.post('/createcode', (req, res) => {
-  client.set(req.body.username.toLowerCase(), randomInt(10000, 99999), "EX", 60 * 2);
+  client.set(req.body.username.toLowerCase(), Math.random() * (99999 - 10e3) + 10e3, "EX", 60 * 2);
   res.status(200);
 })
 

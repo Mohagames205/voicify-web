@@ -13,7 +13,6 @@ services:
       - "5454:80"
     volumes:
       - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
     networks:
       - app-network
     command: node server.js
