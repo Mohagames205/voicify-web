@@ -7,7 +7,6 @@ const net = require('net');
 const redis = require('redis');
 const { randomInt } = require('crypto');
 var session = require('express-session');
-const crypto = require('crypto');
 const { env } = require('process');
 
 
@@ -127,7 +126,7 @@ app.get('/askcode', (req, res) => {
 })
 
 app.post('/createcode', (req, res) => {
-  client.set(req.body.username.toLowerCase(), crypto.randomInt(10e3, 99999), "EX", 60 * 2);
+  client.set(req.body.username.toLowerCase(), randomInt(10e3, 99999), "EX", 60 * 2);
   res.status(200);
 })
 
