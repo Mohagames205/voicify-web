@@ -20,6 +20,19 @@ const peers = {}
 // tijdelijke hack
 const username = USERNAME;
 
+if (navigator.mediaDevices.getUserMedia === undefined) {
+  var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+  getUserMedia({video: false, audio: true}, function(stream){
+    startCallingService(stream);
+  }, Swal.fire({
+    title: 'Error!',
+    text: 'Voxum heeft microfoontoegang nodig om te werken! De website zal niet correct werken.',
+    icon: 'error',
+    confirmButtonText: 'Sluiten'
+  }));
+}
+
 navigator.mediaDevices.getUserMedia({
   video: false,
   audio: true
@@ -33,19 +46,6 @@ navigator.mediaDevices.getUserMedia({
     confirmButtonText: 'Sluiten'
   })
 });
-
-if (navigator.mediaDevices.getUserMedia === undefined) {
-  var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-  getUserMedia({video: false, audio: true}, function(stream){
-    startCallingService(stream);
-  }, Swal.fire({
-    title: 'Error!',
-    text: 'Voxum heeft microfoontoegang nodig om te werken! De website zal niet correct werken.',
-    icon: 'error',
-    confirmButtonText: 'Sluiten'
-  }));
-}
 
 function startCallingService(stream){
   addUserElement(username);
@@ -118,6 +118,8 @@ socket.on('coordinates-update', coordinates => {
         if(userAudio !== null) {
           if(userDistance <= 40){
               const userVolume = 1 - (userDistance / 40)
+              console.log(userDistance);
+              console.log(userVolume);
               userAudio.volume = userVolume;
             }
           else {
