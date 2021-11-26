@@ -5,7 +5,6 @@ const io = require('socket.io')(server);
 const { v4: uuidV4 } = require('uuid');
 const net = require('net');
 const redis = require('redis');
-const crypto = require('crypto');
 var session = require('express-session');
 
 
@@ -125,7 +124,7 @@ app.get('/askcode', (req, res) => {
 })
 
 app.post('/createcode', (req, res) => {
-  client.set(req.body.username.toLowerCase(), crypto.randomInt(10e3, 99999), "EX", 60 * 2);
+  client.set(req.body.username.toLowerCase(), Math.floor(Math.random() * 99999) + 10e3, "EX", 60 * 2);
   res.status(200);
 })
 
