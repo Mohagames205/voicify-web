@@ -117,8 +117,7 @@ socket.on('coordinates-update', coordinates => {
 
         if(userAudio !== null) {
           if(userDistance <= 40){
-              //const userVolume = 1 - (userDistance / 40)
-              const userVolume = 0.9983 - 0.1455 * userDistance + 0.01192 * userDistance ^ 2 + -0.0005158 * userDistance ^ 3 + 1.089E-005 * userDistance ^ 4 + -8.915E-008 * userDistance ^ 5;
+              const userVolume = 1 - (userDistance / 40)
               userAudio.volume = userVolume;
             }
           else {
