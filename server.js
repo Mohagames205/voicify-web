@@ -5,9 +5,8 @@ const io = require('socket.io')(server);
 const { v4: uuidV4 } = require('uuid');
 const net = require('net');
 const redis = require('redis');
-const { randomInt } = require('crypto');
+const crypto = require('crypto');
 var session = require('express-session');
-const { env } = require('process');
 
 
 require("dotenv").config();
@@ -126,7 +125,7 @@ app.get('/askcode', (req, res) => {
 })
 
 app.post('/createcode', (req, res) => {
-  client.set(req.body.username.toLowerCase(), randomInt(10e3, 99999), "EX", 60 * 2);
+  client.set(req.body.username.toLowerCase(), crypto.randomInt(10e3, 99999), "EX", 60 * 2);
   res.status(200);
 })
 
