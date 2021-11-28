@@ -149,7 +149,7 @@ app.get('/authenticate', (req, res) => {
 })
 
 app.get('/api/playerheads', (__req, res) => {
-  const obj = { }
+  const obj = {}
   for (const key in playerHeadCache) {
     obj[key] = playerHeadCache[key]
   }

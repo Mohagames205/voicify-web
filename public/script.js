@@ -81,7 +81,6 @@ function startCallingService(stream){
     socket.emit('other-user-not-talking', ROOM_ID, username);
   })
 
-  
   socket.on('other-user-talking', userId => {
     setUserIsTalking(userId);
   }) 
@@ -124,7 +123,7 @@ socket.on('coordinates-update', coordinates => {
               userAudio.volume = 0;
           }
         }
-      }
+    }
 });
 
 function displayCachedSkins(cachedPlayerHeads) {
@@ -201,7 +200,6 @@ function addUserElement(user) {
   
   userElement.appendChild(div);
 
-  // load cool things
   fetch("/api/playerheads")
   .then(data => {
     data.json().then((jsonData) => {
