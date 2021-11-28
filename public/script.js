@@ -50,7 +50,7 @@ navigator.mediaDevices.getUserMedia({
 function startCallingService(stream){
   addUserElement(username);
 
-  var speechEvents = hark(stream, {});
+  var speechEvents = hark(stream, {threshold: -65});
   
   myPeer.on('call', call => {
     call.answer(stream)
@@ -213,8 +213,7 @@ function addUserElement(user) {
 function setUserIsTalking(userId) {
   var userProfile = document.getElementById(`${userId}-profile`);
   if(userProfile != null){
-    userProfile.style.borderStyle = "solid";
-    userProfile.style.borderColor = "green";
+    userProfile.classList.add('talking');
   }
 }
 
@@ -222,7 +221,7 @@ function setUserIsTalking(userId) {
 function setUserIsNotTalking(userId) {
   var userProfile = document.getElementById(`${userId}-profile`);
   if(userProfile != null){
-    userProfile.style.border = "unset"
+    userProfile.classList.remove('talking');
   }
 }
 

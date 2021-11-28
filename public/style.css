@@ -111,6 +111,14 @@ button:hover {
 
     border-radius: 8px;
     background-color: #383838;
+
+    outline: solid transparent;
+    transition: 0.2s;
+}
+
+.user.talking{
+    outline: solid green;
+    transition: 0.2s;
 }
 
 input:disabled{
