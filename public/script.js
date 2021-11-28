@@ -52,7 +52,6 @@ function startCallingService(stream){
 
   var speechEvents = hark(stream, {});
   
-  // ios doesn't call the client
   myPeer.on('call', call => {
     call.answer(stream)
     console.log("ANSWERED CALL AND CREATED ELEMENT FROM:", call.peer)
@@ -60,7 +59,6 @@ function startCallingService(stream){
     audio.id = call.peer
     addUserElement(call.peer)
 
-    // ios doesn't answer the audio stream for some reason
     call.on('stream', userAudioStream => {
       peers[call.peer] = call
       console.log("SENDING AUDIO STREAM TO:", call.peer)
@@ -71,7 +69,6 @@ function startCallingService(stream){
   socket.on('user-connected', (userId) => {
     addUserElement(userId);
     setTimeout(connectToNewUser,1500,userId,stream)
-    //connectToNewUser(userId, stream)
   })
 
   speechEvents.on("speaking", function(){
@@ -116,11 +113,11 @@ socket.on('coordinates-update', coordinates => {
         userAudio = document.getElementById(volumeUser)
         userDistance = primaryVolumes[volumeUser]
 
+        const maxDistance = 25;
+
         if(userAudio !== null) {
-          if(userDistance <= 40){
-              const userVolume = 1 - (userDistance / 40)
-              console.log(userDistance);
-              console.log(userVolume);
+          if(userDistance < maxDistance){
+              const userVolume = (-1/maxDistance) * userDistance + 1
               userAudio.volume = userVolume;
             }
           else {
