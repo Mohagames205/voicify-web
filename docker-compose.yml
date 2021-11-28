@@ -6,7 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
     image: nodejs
-    container_name: nodejs
     restart: unless-stopped
     ports:
       - "3456:8080"
