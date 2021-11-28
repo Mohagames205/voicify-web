@@ -20,27 +20,12 @@ const peers = {}
 // tijdelijke hack
 const username = USERNAME;
 
-if (navigator.mediaDevices.getUserMedia === undefined) {
-  var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-  getUserMedia({video: false, audio: true}, function(stream){
-    startCallingService(stream);
-  }, Swal.fire({
-    title: 'Error!',
-    text: 'Voxum heeft microfoontoegang nodig om te werken! De website zal niet correct werken.',
-    icon: 'error',
-    confirmButtonText: 'Sluiten'
-  }));
-}
-
 navigator.mediaDevices.getUserMedia({
   video: false,
   audio: true
-}).then(stream => {
-  startCallingService(stream);
-}).catch(function(err){
+}).then(startCallingService).catch(function(err){
   Swal.fire({
-    title: 'Error!',
+    title: 'Oepsie!',
     text: 'Voxum heeft microfoontoegang nodig om te werken! De website zal niet correct werken.',
     icon: 'error',
     confirmButtonText: 'Sluiten'
