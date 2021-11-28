@@ -51,15 +51,16 @@ function startCallingService(stream){
   addUserElement(username);
 
   var speechEvents = hark(stream, {});
-
+  
+  // ios doesn't call the client
   myPeer.on('call', call => {
-    
     call.answer(stream)
     console.log("ANSWERED CALL AND CREATED ELEMENT FROM:", call.peer)
     const audio = document.createElement('audio')
     audio.id = call.peer
     addUserElement(call.peer)
 
+    // ios doesn't answer the audio stream for some reason
     call.on('stream', userAudioStream => {
       peers[call.peer] = call
       console.log("SENDING AUDIO STREAM TO:", call.peer)
@@ -168,6 +169,8 @@ function connectToNewUser(userId, stream) {
   const audio = document.createElement('audio')
   audio.id = userId;
 
+
+  // audio stream not received from IOS device
   call.on('stream', userAudioStream => {
     console.log("SENDING AUDIO STREAM TO:", call.peer);
     addAudioStream(audio, userAudioStream);
