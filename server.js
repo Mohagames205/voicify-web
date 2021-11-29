@@ -4,6 +4,10 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const { v4: uuidV4 } = require('uuid');
 const net = require('net');
+const redis = require('redis');
+var session = require('express-session');
+
+
 require("dotenv").config();
 
 const peerConfig = {
@@ -12,9 +16,18 @@ const peerConfig = {
   path: process.env.PEER_JS_PATH
 };
 
+const redisConfig = {
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD
+}
+
+
 const socket = net.createServer(function(socket) {
 	socket.pipe(socket);
 });
+
+const client = new redis.createClient(redisConfig);
 
 const playerHeadCache = [];
 const commandMap = []
@@ -56,9 +69,19 @@ app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded({extended: true})); // to support URL-encoded bodies
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: process.env.COOKIES_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    secure: false,
+    maxAge: 2592e5
+  },
+}))
 
-app.get('/', (__req, res) => {
-  res.render('preroom');
+app.get('/', (req, res) => {
+  res.render('preroom', {user: req.session.user});
 })
 
 app.post("/room/create", (req, res) => {
@@ -70,11 +93,63 @@ app.post("/room/join", (req, res) => {
 })
 
 app.get('/room/:room', (req, res) => {
-  res.render('room', { roomId: req.params.room, username: req.query.username, peerSettings: peerConfig });
+  if(req.session.user){
+    res.render('room', { roomId: req.params.room, username: req.session.user, peerSettings: peerConfig });
+    return;
+  }
+  res.render('authenticate', {roomId: req.params.room, username: null});
+})
+
+app.get('/auth', (req, res) => {
+  if(!req.session.user){
+    res.render('authenticate', {username: req.query.username, roomId: req.query.roomuuid});
+    return; 
+  }
+  username = req.session.user;
+  res.redirect(`/room/${req.query.roomuuid}`);
+})
+
+app.get('/askcode', (req, res) => {
+    if(req.query.auth && req.query.username){
+        auth = req.query.auth;
+        username = req.query.username;
+        if(auth == process.env.API_SECRET){
+          client.get(req.query.username.toLowerCase(), (err, reply) => {
+            res.json({code: reply})
+          });
+          return;
+        }
+    }
+    res.json({error: 'Authentication failed!'});
+})
+
+app.post('/createcode', (req, res) => {
+  client.set(req.body.username.toLowerCase(), Math.floor(Math.random() * 99999) + 10e3, "EX", 60 * 2);
+  res.status(200);
+})
+
+app.get('/verifycode', (req, res) => {
+  client.get(req.query.username.toLowerCase(), (err, reply) => {
+    res.json({is_correct: (reply == req.query.code)})
+  });
+})
+
+app.get('/authenticate', (req, res) => {
+  client.get(req.query.username.toLowerCase(), (err, reply) => {
+    if(reply == req.query.code){
+      req.session.user = req.query.username.toLowerCase();
+      username = req.query.username.toLowerCase();
+      roomId = req.query.roomId;
+
+      res.redirect(`/room/${roomId}/`);
+      return;
+    }
+    res.json({error: 'Authentication code is incorrect.'})
+  });
 })
 
 app.get('/api/playerheads', (__req, res) => {
-  const obj = { }
+  const obj = {}
   for (const key in playerHeadCache) {
     obj[key] = playerHeadCache[key]
   }
@@ -90,7 +165,6 @@ app.post('/api/playerheads/upload', (req, __res) => {
 
 io.on('connection', socket => {
   socket.on('join-room', (roomId, userId) => {
-
     socket.join(roomId);
     socket.to(roomId).emit('user-connected', userId);
     socket.username = userId;
@@ -109,6 +183,13 @@ io.on('connection', socket => {
     socket.to(roomId).emit('other-user-not-talking', userId);
 })
 })
+
+function getAllRooms(){
+  const rooms = io.of("/").adapter.rooms;
+  rooms.array.forEach(element => {
+    console.log(element);
+  });
+}
 
 function pushCoordinates(coordinates, roomId){
   io.to(roomId).emit('coordinates-update', coordinates);

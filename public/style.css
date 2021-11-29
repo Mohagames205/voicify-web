@@ -111,6 +111,47 @@ button:hover {
 
     border-radius: 8px;
     background-color: #383838;
+
+    outline: solid transparent;
+    transition: 0.2s;
+}
+
+.user.talking{
+    outline: solid green;
+    transition: 0.2s;
+}
+
+input:disabled{
+    cursor: not-allowed;
+}
+
+input::placeholder{
+    color: lightgray;
+}
+
+.notification{
+    font-size: 15px;
+    background-color: #8526fa9b;
+    padding: 12px;
+    width: 95%;
+    border-radius: 5px;
+    border-bottom: #7815f1 solid 5px;
+    text-align: left;
+}
+
+.splitted-info {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.info-block {
+    align-self: center;
+    text-align: justify; 
+
+    font-size: 18px; 
+    width: 100%; 
+    border-left: solid rgb(22, 21, 21) 2px; 
+    padding-left: 40px;
 }
 
 @media screen and (max-width: 800px) {
@@ -131,6 +172,16 @@ button:hover {
     .user {
         width: 95vw;
     }
+
+    
+    .splitted-info {
+        display: unset;
+    }
+
+    .info-block {
+        padding: unset;
+        border: unset;
+    }
   }
 
 @media screen and (max-width: 350px) {
@@ -141,5 +192,6 @@ button:hover {
     .text {
         font-size: 20px;
     }
-    
 }
+
+

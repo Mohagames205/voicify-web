@@ -5,20 +5,37 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/style.css">
-    <title>Preroom</title>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+            const USER = "<%= user %>";
+    </script>
+    <!-- Primary Meta Tags -->
+    <title>Voxum - Proximity Voice Chat</title>
+    <meta name="title" content="Voxum - Proximity Voice Chat">
+    <meta name="description" content="Voxum is een proximity voice chat in Minecraft Bedrock Edition. Speel samen met je vrienden en geniet van een unieke speelervaring.">
+    <meta name="keywords" content="Minecraft, proximity, voice, calling, minecraft bedrock edition">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://voxum.mootje.be/">
+    <meta property="og:title" content="Voxum">
+    <meta property="og:description" content="Voxum is een proximity voice chat in Minecraft Bedrock Edition. Speel samen met je vrienden en geniet van een unieke speelervaring.
+    ">
+    <meta property="og:image" content="https://voxum.mootje.be/resources/voxum-banner.png">
+    <meta property="twitter:image" content="">
 </head>
 <body>
     <p class="logo"><span style="color: #8526fa;">Vox</span><span style="font-weight: 100">um</span><sup style="font-size: 19px;">α</sup></p>  
     <main>
-
+        
         <div class="form-container">
-            <form action="/room/join" method="POST" id="test">
+            <form action="/auth" method="GET" id="test">
                 <h2>Join room</h2>
                 <label for="username"><p>Username</p></label>
                 <input  name="username" id="username"><br><br>
     
                 <label for="roomuuid"><p>Room ID</p></label>
-                <input name="uuid" id="roomuuid"><br><br>
+                <input name="roomuuid" id="roomuuid"><br><br>
                 <button>Join</button>
             </form>
         </div>
@@ -35,10 +52,26 @@
     
 </body>
 <script>
+
+    if(USER){
+        const usernameInput = document.getElementById('username');
+        usernameInput.placeholder = USER;
+        usernameInput.disabled = true;
+    }
+
     // Tijdelijke hack voor https://github.com/Mohagames205/voxum-client/issues/5
     navigator.mediaDevices.getUserMedia({
         video: false,
         audio: true
-    })
+    }).catch(function(err){
+        Swal.fire({
+                title: 'Error!',
+                text: 'Voxum heeft microfoontoegang nodig om te werken! De website zal niet correct werken.',
+                icon: 'error',
+                confirmButtonText: 'Sluiten'
+            })
+    });
+
+
 </script>
 </html>

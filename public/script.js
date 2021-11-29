@@ -7,20 +7,14 @@ var peerOptions = {
     port: PEER_PORT,
     path: PEER_PATH,
     config: { 'iceServers': [
-    { url: 'stun:stun.l.google.com:19302' },
-    { url: 'stun:stun1.l.google.com:19302' },
-{ url: 'stun:stun2.l.google.com:19302' },
-{ url: 'stun:stun3.l.google.com:19302' },
-{ url: 'stun:stun4.l.google.com:19302' },
-{ url: 'stun:stun.voipbuster.com' },
-{ url: 'stun:stun.voipstunt.com' },
-{ url: 'stun:stun.voxgratia.org' }
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+{ urls: 'stun:stun2.l.google.com:19302' },
+{ urls: 'stun:stun3.l.google.com:19302' },
   ]}, debug: false
 }
 
 var myPeer = new Peer(USERNAME.toLowerCase(), peerOptions);
-//const myAudio = document.createElement('audio')
-//myAudio.muted = true
 const peers = {}
 
 // tijdelijke hack
@@ -29,14 +23,21 @@ const username = USERNAME;
 navigator.mediaDevices.getUserMedia({
   video: false,
   audio: true
-}).then(stream => {
-  //addAudioStream(myAudio, stream)
+}).then(startCallingService).catch(function(err){
+  Swal.fire({
+    title: 'Oepsie!',
+    text: 'Voxum heeft microfoontoegang nodig om te werken! De website zal niet correct werken.',
+    icon: 'error',
+    confirmButtonText: 'Sluiten'
+  })
+});
+
+function startCallingService(stream){
   addUserElement(username);
 
-  var speechEvents = hark(stream, {});
-
+  var speechEvents = hark(stream, {threshold: -65});
+  
   myPeer.on('call', call => {
-    
     call.answer(stream)
     console.log("ANSWERED CALL AND CREATED ELEMENT FROM:", call.peer)
     const audio = document.createElement('audio')
@@ -53,7 +54,6 @@ navigator.mediaDevices.getUserMedia({
   socket.on('user-connected', (userId) => {
     addUserElement(userId);
     setTimeout(connectToNewUser,1500,userId,stream)
-    //connectToNewUser(userId, stream)
   })
 
   speechEvents.on("speaking", function(){
@@ -66,7 +66,6 @@ navigator.mediaDevices.getUserMedia({
     socket.emit('other-user-not-talking', ROOM_ID, username);
   })
 
-  
   socket.on('other-user-talking', userId => {
     setUserIsTalking(userId);
   }) 
@@ -74,7 +73,7 @@ navigator.mediaDevices.getUserMedia({
   socket.on('other-user-not-talking', userId => {
     setUserIsNotTalking(userId);
   })
-})
+}
 
 
 socket.on('user-disconnected', userId => {
@@ -98,17 +97,18 @@ socket.on('coordinates-update', coordinates => {
         userAudio = document.getElementById(volumeUser)
         userDistance = primaryVolumes[volumeUser]
 
+        const maxDistance = 25;
+
         if(userAudio !== null) {
-          if(userDistance <= 40){
-              //const userVolume = 1 - (userDistance / 40)
-              const userVolume = 0.9983 - 0.1455 * userDistance + 0.01192 * userDistance ^ 2 + -0.0005158 * userDistance ^ 3 + 1.089E-005 * userDistance ^ 4 + -8.915E-008 * userDistance ^ 5;
+          if(userDistance < maxDistance){
+              const userVolume = (-1/maxDistance) * userDistance + 1
               userAudio.volume = userVolume;
             }
           else {
               userAudio.volume = 0;
           }
         }
-      }
+    }
 });
 
 function displayCachedSkins(cachedPlayerHeads) {
@@ -150,6 +150,8 @@ function connectToNewUser(userId, stream) {
   const audio = document.createElement('audio')
   audio.id = userId;
 
+
+  // audio stream not received from IOS device
   call.on('stream', userAudioStream => {
     console.log("SENDING AUDIO STREAM TO:", call.peer);
     addAudioStream(audio, userAudioStream);
@@ -183,7 +185,6 @@ function addUserElement(user) {
   
   userElement.appendChild(div);
 
-  // load cool things
   fetch("/api/playerheads")
   .then(data => {
     data.json().then((jsonData) => {
@@ -195,8 +196,7 @@ function addUserElement(user) {
 function setUserIsTalking(userId) {
   var userProfile = document.getElementById(`${userId}-profile`);
   if(userProfile != null){
-    userProfile.style.borderStyle = "solid";
-    userProfile.style.borderColor = "green";
+    userProfile.classList.add('talking');
   }
 }
 
@@ -204,7 +204,7 @@ function setUserIsTalking(userId) {
 function setUserIsNotTalking(userId) {
   var userProfile = document.getElementById(`${userId}-profile`);
   if(userProfile != null){
-    userProfile.style.border = "unset"
+    userProfile.classList.remove('talking');
   }
 }
 
