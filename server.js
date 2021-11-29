@@ -49,7 +49,7 @@ socket.on('connection', (tcpSocket) => {
               const inboundData = socketData["data"];
               const command = socketData["command"];
               const __auth = socketData["auth"];
-
+              
               handleCommand(command, inboundData);
           }
           catch(e){
@@ -192,6 +192,7 @@ function getAllRooms(){
 }
 
 function pushCoordinates(coordinates, roomId){
+  console.log("updating coords", coordinates);
   io.to(roomId).emit('coordinates-update', coordinates);
 }
 

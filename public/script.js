@@ -92,14 +92,15 @@ socket.on('user-disconnected', userId => {
 
 socket.on('coordinates-update', coordinates => {
     var primaryVolumes = coordinates[username]
+    console.log("primary-volumes", primaryVolumes);
     if(!primaryVolumes) return;
     for (volumeUser in primaryVolumes){
         userAudio = document.getElementById(volumeUser)
         userDistance = primaryVolumes[volumeUser]
         
-        
         const maxDistance = 25;
 
+        console.log("user-audio", userAudio);
         if(userAudio !== null) {
           console.log(username, primaryVolumes)
           if(userDistance < maxDistance){
